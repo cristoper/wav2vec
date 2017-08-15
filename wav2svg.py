@@ -135,11 +135,8 @@ if __name__ == "__main__":
     data = struct.unpack('<%d%s' % (nchannels * nframes, samp_fmt), wav_data)
 
     # Build the path points for each channel from data frames:
-    paths = []
-    for chan in xrange(0, nchannels):
-        points = extract_scale_chan_data(data, chan, args.width, args.height,
-                nchannels, args.downtoss)
-        paths.append(points)
+    paths = [extract_scale_chan_data(data, chan, args.width, args.height,
+        nchannels, args.downtoss) for chan in xrange(0, nchannels)]
 
     actual_width = min(args.width, len(paths[0]))
     svg_str = paths_to_svg(paths, actual_width, height=args.height)
