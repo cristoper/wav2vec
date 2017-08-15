@@ -46,8 +46,9 @@ if __name__ == "__main__":
         # signed 32-bit
         samp_fmt = 'i'
     else:
-        #TODO: warn user that only 8, 16, and 32 bit samples supported
-        pass
+        import sys
+        sys.exit("File is not 8-bit unsigned nor 16- nor 32-bit signed PCM .wav"\
+                " format. Those are the only supported formats.")
 
     # convert bytes to ints
     # This returns one long tuple of ints, but wav channel data is interleaved
