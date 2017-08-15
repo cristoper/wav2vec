@@ -53,33 +53,36 @@ if __name__ == "__main__":
     # convert bytes to ints
     # This returns one long tuple of ints, but wav channel data is interleaved
     # so that left = data[i+0], right=data[i+1], etc
+    # (leftsample0, rightsample0, leftsample1, rightsample1, ...)
     data = struct.unpack('<%d%s' % (nchannels * nframes, samp_fmt), wav_data)
 
     # There is a path for each channel, and each path is an array of points
     paths = []
 
-    # Build the path points for each channel from interleaved data:
+    # Build the path points for each channel from data frames:
     x_scale = min(1.0, args.width/nframes)
     for chan in xrange(0, nchannels):
         points = []
-        for sample in xrange(0, nframes, nchannels):
+        for frame in xrange(0, nframes, nchannels):
             chan_offset = args.height*chan
-            x = sample*x_scale
+            sample = data[frame+chan]
+            x = frame*x_scale
             # important to multiply by args.height before dividing so we don't
             # lose floating point resolution on very small numbers:
-            y = (data[sample+chan] * -args.height/2)/2**(nbits-1) + chan_offset + args.height/2
+            y = (sample * -args.height/2)/2**(nbits-1) + chan_offset + args.height/2
             points.append(Point(x, y))
         paths.append(points)
 
     # print SVG
-    print('<svg width="%d" height="%d" xmlns="http://www.w3.org/2000/svg" version="1.1">'
-            % (args.width, 2*args.height))
+    svg_str = '<svg width="%d" height="%d" xmlns="http://www.w3.org/2000/svg" version="1.1">'\
+            % (args.width, 2*args.height)
 
     # print a polyline for each channel
     for path in paths:
-        print('<polyline stroke="black" fill="none" points="')
+        svg_str += '<polyline stroke="black" fill="none" points="'
         for p in path:
-            print(p.x, p.y)
-        print('" />')
+            svg_str += ' %f, %f' % (p.x, p.y)
+        svg_str += '" />'
 
-    print('</svg>')
+    svg_str += '</svg>'
+    print(svg_str)
