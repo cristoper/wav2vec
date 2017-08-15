@@ -67,12 +67,13 @@ def extract_scale_chan_data(data, chan, width, height, nchannels=2, downtoss=1):
     downsampling figure (we keep 1 out of every downtoss samples), and returns
     a list of points which make up the scaled data for the channel-th channel.
     """
-    points = []
     # use slicing to isolate channel data:
     chan_data = data[chan::nchannels]
+
     # downsample:
     chan_data = chan_data[::downtoss]
 
+    points = []
     for sample in xrange(0, len(chan_data)):
         chan_offset = height*chan
         # explicit cast to float needed for Python2
@@ -80,7 +81,7 @@ def extract_scale_chan_data(data, chan, width, height, nchannels=2, downtoss=1):
         x = sample*x_scale
         # important to multiply by height before dividing so we don't
         # lose floating point resolution on very small numbers:
-        y = (data[sample] * -height/2)/2**(nbits-1) + chan_offset + height/2
+        y = (chan_data[sample] * -height/2)/2**(nbits-1) + chan_offset + height/2
         points.append(Point(x, y))
     return points
 
