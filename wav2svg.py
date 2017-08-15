@@ -140,5 +140,6 @@ if __name__ == "__main__":
                 nchannels, args.downtoss)
         paths.append(points)
 
-    svg_str = paths_to_svg(paths, width=len(paths[0]), height=args.height)
+    actual_width = min(args.width, len(paths[0]))
+    svg_str = paths_to_svg(paths, actual_width, height=args.height)
     print(svg_str)
