@@ -55,6 +55,7 @@ if __name__ == "__main__":
     # so that left = data[i+0], right=data[i+1], etc
     # (leftsample0, rightsample0, leftsample1, rightsample1, ...)
     data = struct.unpack('<%d%s' % (nchannels * nframes, samp_fmt), wav_data)
+    
 
     # There is a path for each channel, and each path is an array of points
     paths = []
@@ -63,13 +64,16 @@ if __name__ == "__main__":
     x_scale = min(1.0, args.width/nframes)
     for chan in xrange(0, nchannels):
         points = []
-        for frame in xrange(0, nframes, nchannels):
+        # use slicing to isolate channel data:
+        chan_data = data[chan::nchannels]
+
+        for sample in xrange(0, len(chan_data)):
             chan_offset = args.height*chan
-            sample = data[frame+chan]
-            x = frame*x_scale
+            sample_data = data[sample]
+            x = sample*x_scale
             # important to multiply by args.height before dividing so we don't
             # lose floating point resolution on very small numbers:
-            y = (sample * -args.height/2)/2**(nbits-1) + chan_offset + args.height/2
+            y = (sample_data * -args.height/2)/2**(nbits-1) + chan_offset + args.height/2
             points.append(Point(x, y))
         paths.append(points)
 
