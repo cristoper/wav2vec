@@ -97,7 +97,8 @@ def paths_to_svg(paths, width, height):
 
     # print a polyline for each channel
     for path in paths:
-        svg_str += '<polyline stroke="black" fill="none" points="'
+        svg_str += '<polyline stroke="black" stroke-linecap="round" stroke-linejoin="round"'\
+                ' fill="none" points="'
         for p in path:
             svg_str += ' %f, %f' % (p.x, p.y)
         svg_str += '" />'
