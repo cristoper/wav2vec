@@ -77,7 +77,7 @@ def extract_scale_chan_data(data, chan, width, height, nchannels=2, downtoss=1):
         chan_offset = height*chan
         # explicit cast to float needed for Python2
         x_scale = min(1.0, float(width)/len(chan_data))
-        x = sample*x_scale*downtoss
+        x = sample*x_scale
         # important to multiply by height before dividing so we don't
         # lose floating point resolution on very small numbers:
         y = (data[sample] * -height/2)/2**(nbits-1) + chan_offset + height/2
