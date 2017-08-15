@@ -15,7 +15,7 @@ if __name__ == "__main__":
     aparser = argparse.ArgumentParser(description="Convert wav (.wav and .aiff) files to SVG graphics")
     aparser.add_argument("filename", help="The WAV file to read")
     aparser.add_argument("--width", default=1000, type=int, help="Maximum width of generated SVG (graphic will be scaled down to this size in px)")
-    aparser.add_argument("--height", default=500, type=int, help="Maximum height of generated SVG (graphic will be scaled down to this size in px). Note that this scales the highest possible amplitude (given the sample bit depth), not the highest amplitude that actually occurs in the data.")
+    aparser.add_argument("--height", default=500, type=int, help=("Maximum height of generated SVG (graphic will be scaled down to this size in px). Note that this scales the highest possible amplitude (given the sample bit depth), not the highest amplitude that actually occurs in the data."))
 
     args = aparser.parse_args()
 
