@@ -104,7 +104,7 @@ def paths_to_svg(paths, width, height):
 
 if __name__ == "__main__":
     import argparse
-    aparser = argparse.ArgumentParser(description="Convert wav (.wav and .aiff) files to SVG graphics")
+    aparser = argparse.ArgumentParser(description="Convert wav files to SVG graphics")
     aparser.add_argument("filename", help="The WAV file to read")
     aparser.add_argument("--width", default=1000, type=int, help="Maximum width of generated SVG (graphic will be scaled down to this size in px)")
     aparser.add_argument("--downtoss", default=1, type=int, help="Downsize by keeping only 1 out of every N samples.", metavar="n")
