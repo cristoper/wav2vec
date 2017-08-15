@@ -2,13 +2,105 @@ import wave
 import struct
 from collections import namedtuple
 
-Point = namedtuple('Point', ['x', 'y'])
-
 try:
     xrange
 except NameError:
     # in Python3 xrange has been renamed to range
     xrange = range
+
+Point = namedtuple('Point', ['x', 'y'])
+
+def read_wav_data(filename):
+    """
+    Open wave file and read all data frames into memory. (Python 2.7 does not
+    support using wave.open as a context manager, so instead we manually open
+    the file and then call wave.open on it.)
+
+    Returns a 7-tuple:
+        (databytes, nchannels, sampwidth, framerate, nframes, comptype, compname)
+
+    The first element is the string of bytes containing the actual wave data
+    frames. It can be converted to integers using the struct.unpack() method
+    from the standard library.
+
+    The other elements are as documented in the wave module:
+    https://docs.python.org/3/library/wave.html
+    """
+    with open(filename, mode='rb') as f:
+        wf = wave.open(f)
+
+        # get wav info
+        (nchannels, sampwidth, framerate, nframes, comptype, compname) = \
+                wf.getparams()
+
+        # read entire file into memory
+        wav_data = wf.readframes(nframes)
+        wf.close()
+    return (wav_data, nchannels, sampwidth, framerate, nframes, comptype, compname)
+
+def struct_fmt_char(sampwidth):
+    """
+    Takes a sample width (in bytes) and returns the character character to use
+    with struct.unpack() to decode the sample into an integer.
+
+    Only 8-bit (unsigned), 16-bit, and 32-bit (both signed) PCM files are
+    supported. Returns None if an unsupported sampwidth is provided.
+    
+    see: https://docs.python.org/library/struct.html
+    """
+    if sampwidth == 1:
+        # 8 bit wav samples are unsigned
+        return 'b'
+    elif sampwidth == 2:
+        # signed 16-bit
+        return 'h'
+    elif sampwidth == 4:
+        # signed 32-bit
+        return 'i'
+    else:
+        return None
+
+def extract_scale_chan_data(data, chan, width, height, nchannels=2, downtoss=1):
+    """
+    Takes a tuple of frame data (with interleaved channels), the number of
+    channels, a channel number, a maximum width, a maximum height, a
+    downsampling figure (we keep 1 out of every downtoss samples), and returns
+    a list of points which make up the scaled data for the channel-th channel.
+    """
+    points = []
+    # use slicing to isolate channel data:
+    chan_data = data[chan::nchannels]
+    # downsample:
+    chan_data = chan_data[::downtoss]
+
+    for sample in xrange(0, len(chan_data)):
+        chan_offset = height*chan
+        x = sample*x_scale*downtoss
+        # important to multiply by height before dividing so we don't
+        # lose floating point resolution on very small numbers:
+        y = (data[sample] * -height/2)/2**(nbits-1) + chan_offset + height/2
+        points.append(Point(x, y))
+    return points
+
+def paths_to_svg(paths, width, height):
+    """
+    Takes a list of paths (which are lists of Points) and returns a string
+    containing SVG defining a polyline for each path.
+    """
+    # We set the width and height so that the initial viewport matches the
+    # combined dimensions of all waveforms.
+    nchannels = len(paths)
+    svg_str = '<svg width="%d" height="%d" xmlns="http://www.w3.org/2000/svg" version="1.1">'\
+            % (width, nchannels*height)
+
+    # print a polyline for each channel
+    for path in paths:
+        svg_str += '<polyline stroke="black" fill="none" points="'
+        for p in path:
+            svg_str += ' %f, %f' % (p.x, p.y)
+        svg_str += '" />'
+    svg_str += '</svg>'
+    return svg_str
 
 if __name__ == "__main__":
     import argparse
@@ -20,75 +112,31 @@ if __name__ == "__main__":
 
     args = aparser.parse_args()
 
-    # Open wave file and start converting samples to SVG points
-    # (Python 2.7 does not support using wave.open as a context manager)
-    with open(args.filename, mode='rb') as file:
-        wf = wave.open(file)
-
-        # get wav info
-        (nchannels, sampwidth, framerate, nframes, comptype, compname) = \
-                wf.getparams()
-        nbits = sampwidth * 8
-
-        # read entire file into memory
-        wav_data = wf.readframes(nframes)
-        wf.close()
+    (wav_data, nchannels, sampwidth, framerate, nframes, comptype, compname) = \
+            read_wav_data(args.filename)
+    nbits = sampwidth * 8
 
     # Select the correct struct.unpack() format string character
     # based on the sample size
-    # see: https://docs.python.org/library/struct.html
-    if sampwidth == 1:
-        # 8 bit wav samples are unsigned
-        samp_fmt = 'b'
-    elif sampwidth == 2:
-        # signed 16-bit
-        samp_fmt = 'h'
-    elif sampwidth == 4:
-        # signed 32-bit
-        samp_fmt = 'i'
-    else:
+    samp_fmt = struct_fmt_char(sampwidth)
+    if samp_fmt is None:
         import sys
         sys.exit("File is not 8-bit unsigned nor 16- nor 32-bit signed PCM .wav"\
                 " format. Those are the only supported formats.")
 
     # convert bytes to ints
-    # This returns one long tuple of ints, but wav channel data is interleaved
+    # This returns one long tuple of ints; wav channel data is interleaved
     # so that left = data[i+0], right=data[i+1], etc
     # (leftsample0, rightsample0, leftsample1, rightsample1, ...)
     data = struct.unpack('<%d%s' % (nchannels * nframes, samp_fmt), wav_data)
-    
-
-    # There is a path for each channel, and each path is an array of points
-    paths = []
 
     # Build the path points for each channel from data frames:
+    paths = []
     x_scale = min(1.0, args.width/nframes)
     for chan in xrange(0, nchannels):
-        points = []
-        # use slicing to isolate channel data:
-        chan_data = data[chan::nchannels]
-        # downsample:
-        chan_data = chan_data[::args.downtoss]
-
-        for sample in xrange(0, len(chan_data)):
-            chan_offset = args.height*chan
-            x = sample*x_scale*args.downtoss
-            # important to multiply by args.height before dividing so we don't
-            # lose floating point resolution on very small numbers:
-            y = (data[sample] * -args.height/2)/2**(nbits-1) + chan_offset + args.height/2
-            points.append(Point(x, y))
+        points = extract_scale_chan_data(data, chan, args.width, args.height,
+                nchannels, args.downtoss)
         paths.append(points)
 
-    # print SVG
-    svg_str = '<svg width="%d" height="%d" xmlns="http://www.w3.org/2000/svg" version="1.1">'\
-            % (args.width, 2*args.height)
-
-    # print a polyline for each channel
-    for path in paths:
-        svg_str += '<polyline stroke="black" fill="none" points="'
-        for p in path:
-            svg_str += ' %f, %f' % (p.x, p.y)
-        svg_str += '" />'
-
-    svg_str += '</svg>'
+    svg_str = paths_to_svg(paths, args.width, args.height)
     print(svg_str)
