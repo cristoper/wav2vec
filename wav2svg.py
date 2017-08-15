@@ -15,6 +15,7 @@ if __name__ == "__main__":
     aparser = argparse.ArgumentParser(description="Convert wav (.wav and .aiff) files to SVG graphics")
     aparser.add_argument("filename", help="The WAV file to read")
     aparser.add_argument("--width", default=1000, type=int, help="Maximum width of generated SVG (graphic will be scaled down to this size in px)")
+    aparser.add_argument("--downtoss", default=1, type=int, help="Downsize by keeping only 1 out of every N samples.", metavar="n")
     aparser.add_argument("--height", default=500, type=int, help=("Maximum height of generated SVG (graphic will be scaled down to this size in px). Note that this scales the highest possible amplitude (given the sample bit depth), not the highest amplitude that actually occurs in the data."))
 
     args = aparser.parse_args()
@@ -66,14 +67,15 @@ if __name__ == "__main__":
         points = []
         # use slicing to isolate channel data:
         chan_data = data[chan::nchannels]
+        # downsample:
+        chan_data = chan_data[::args.downtoss]
 
         for sample in xrange(0, len(chan_data)):
             chan_offset = args.height*chan
-            sample_data = data[sample]
-            x = sample*x_scale
+            x = sample*x_scale*args.downtoss
             # important to multiply by args.height before dividing so we don't
             # lose floating point resolution on very small numbers:
-            y = (sample_data * -args.height/2)/2**(nbits-1) + chan_offset + args.height/2
+            y = (data[sample] * -args.height/2)/2**(nbits-1) + chan_offset + args.height/2
             points.append(Point(x, y))
         paths.append(points)
 
