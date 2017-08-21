@@ -13,6 +13,9 @@ def main():
 
     args = aparser.parse_args()
 
+    # setup logging
+    logging.basicConfig(level=logging.DEBUG)
+
     # Test whether WAV or AIFF
     decoder_class = wave
     sndtype = sndhdr.what(args.filename)[0]
@@ -32,4 +35,5 @@ if __name__ == "__main__":
     import argparse
     import sndhdr
     import wave
+    import logging
     main()
