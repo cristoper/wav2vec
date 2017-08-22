@@ -139,7 +139,7 @@ class WavDecoder(object):
 
         if self.max_height <= 0:
             # If max-height is set at 0, then use full bitdepth
-            self.height = self.params.sampwidth * 8 -1
+            self.height = 2**(self.params.sampwidth*8) - 1
         else:
             self.height = min(self.max_height,
                               2**(self.params.sampwidth * 8 - 1))
