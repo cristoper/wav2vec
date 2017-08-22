@@ -171,14 +171,13 @@ class WavDecoder(object):
         """
         # important to multiply by height before dividing so we don't
         # lose floating point resolution on very small numbers:
-        # multiply by negative height because in the SVG coordinate system
-        # positive numbers move down
         sampwidth = self.params.sampwidth
         bitdepth = sampwidth * 8
         divisor = 2**(bitdepth-1)
         if sampwidth == 1 and self.decoder == wave:
+            # 8-bit wav files are unsigned
             y -= divisor
-        return (y * -self.height/2)/divisor
+        return (y * self.height/2)/divisor
 
     @property
     def struct_fmt_char(self):
@@ -258,9 +257,8 @@ class WavDecoder(object):
             chan_data = chan_data[::self._downtoss]
             chan_points = []
             for i, sample in enumerate(chan_data):
-                y_offset = self.height*chan
                 x = self.scale_x(i + start)
-                y = self.scale_y(sample) + y_offset + self.height/2
+                y = self.scale_y(sample)
                 chan_points.append(Point(x, y))
             sep_data.append(chan_points)
         self.index += frames

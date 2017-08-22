@@ -46,5 +46,8 @@ class SVGSerializer(Serializer):
     def path_end_matter(self, chan):
         return '" />'
 
-    def points_to_str(self, sample):
-        return ' %f, %f' % sample
+    def points_to_str(self, sample, chan):
+        # multiply by negative height because in the SVG coordinate system
+        # positive numbers move down
+        (x, y) = sample.x, -1*sample.y + self.y_offset(chan)
+        return ' %f, %f' % (x, y)

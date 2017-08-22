@@ -33,11 +33,18 @@ class Serializer(object):
         return ''
 
     @abc.abstractmethod
-    def points_to_str(self, sample):
+    def points_to_str(self, sample, chan):
         return "%f, %f" % sample
 
     def __init__(self, decoder):
         self.decoder = decoder
+
+    def y_offset(self, chan):
+        """
+        A convenience for serializers who want to stack channels vertically:
+            returns an offset to be added to each y-component.
+        """
+        return self.decoder.height*chan + self.decoder.height/2.0
 
     def output(self, outfile=sys.stdout):
         """
@@ -54,7 +61,7 @@ class Serializer(object):
                     if is_opening or nchannels > 1:
                         outfile.write(self.path_front_matter(chan))
                     for sample in chan_data:
-                        outfile.write(self.points_to_str(sample))
+                        outfile.write(self.points_to_str(sample, chan))
                     if is_closing or nchannels > 1:
                         outfile.write(self.path_end_matter(chan))
             outfile.write(self.doc_end_matter(self.decoder.params))
