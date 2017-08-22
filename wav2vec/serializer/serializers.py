@@ -40,10 +40,11 @@ class SVGSerializer(Serializer):
         return '</svg>'
 
     def path_front_matter(self, chan):
-        return '<polyline stroke="black" stroke-linecap="round" stroke-linejoin="round" fill="none" points="'
+        return '<polyline stroke="black" stroke-linecap="round"'\
+            ' stroke-linejoin="round" fill="none" points="'
 
     def path_end_matter(self, chan):
         return '" />'
 
     def points_to_str(self, sample):
-        return ' %f, %f,' % sample
+        return ' %f, %f' % sample
