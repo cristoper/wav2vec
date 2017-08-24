@@ -1,13 +1,13 @@
-from .Serializer import Serializer
+from .Formatter import Formatter
 
 
-class CSVSerializer(Serializer):
+class CSVFormatter(Formatter):
     """
     """
     backend = "CSV"
 
     def doc_front_matter(self, *args):
-        return super(CSVSerializer, self).doc_front_matter()
+        return super(CSVFormatter, self).doc_front_matter()
 
     def doc_end_matter(self, *args):
         return ''
@@ -24,7 +24,7 @@ class CSVSerializer(Serializer):
         return "%f, %f\n" % sample
 
 
-class SVGSerializer(Serializer):
+class SVGFormatter(Formatter):
     """
     Convert paths to SVG.
     """

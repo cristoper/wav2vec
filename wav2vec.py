@@ -26,10 +26,10 @@ def main():
     decoder = WavDecoder(args.filename, decoder_class=decoder_class, bs=0,
                          max_width=args.width, max_height=args.height,
                          downtoss=args.downtoss)
-    serializer = SVGSerializer(decoder)
-    #serializer = CSVSerializer(decoder)
-    serializer.output(sys.stdout)
-    #print(serializer)
+    formatter = SVGFormatter(decoder)
+    #formatter = CSVFormatter(decoder)
+    formatter.output(sys.stdout)
+    #print(formatter)
 
 if __name__ == "__main__":
     import argparse

@@ -1,2 +1,2 @@
 from .WavDecoder import WavDecoder
-from .serializer import SVGSerializer, CSVSerializer
+from .formatter import SVGFormatter, CSVFormatter

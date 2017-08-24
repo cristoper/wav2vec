@@ -1,5 +1,8 @@
 import abc
 import sys
+import logging
+
+logger = logging.getLogger(__name__)
 
 try:
     from StringIO import StringIO
@@ -8,9 +11,9 @@ except ImportError:
     from io import StringIO
 
 
-class Serializer(object):
+class Formatter(object):
     """
-    Abstract base class which all serializers must subclass.
+    Abstract base class which all formatters must subclass.
     """
     __metaclass__ = abc.ABCMeta
 
@@ -41,7 +44,7 @@ class Serializer(object):
 
     def y_offset(self, chan):
         """
-        A convenience for serializers who want to stack channels vertically:
+        A convenience for formatters who want to stack channels vertically:
             returns an offset to be added to each y-component.
         """
         return self.decoder.height*chan + self.decoder.height/2.0
