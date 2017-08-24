@@ -118,7 +118,8 @@ class Formatter(object):
         with self.decoder as data:
             outfile.write(self.doc_front_matter(self.decoder.params))
             for paths in data:
-                is_opening = self.decoder.index - self.decoder.bs == 0
+                is_opening = (self.decoder.bs == 0) or\
+                    (self.decoder.index - self.decoder.bs == 0)
                 is_closing = self.decoder.index == self.decoder.params.nframes
                 nchannels = len(paths)
                 for chan, chan_data in enumerate(paths):
