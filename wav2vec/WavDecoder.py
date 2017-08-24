@@ -253,9 +253,8 @@ class WavDecoder(object):
         wav_bytes = self._wav_file.readframes(frames)
         logger.debug("Read %d frames" % frames)
         fmt = self._samp_fmt
-        data = struct.unpack('%s%d%s' %
-                             (self.endchar, p.nchannels * frames, fmt),
-                             wav_bytes)
+        fmt_str = '%s%d%s' % (self.endchar, p.nchannels * frames, fmt)
+        data = struct.unpack(fmt_str, wav_bytes)
 
         # Extract the tuples of integers into a list of Points for each channel:
         start = self.index + 1
