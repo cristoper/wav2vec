@@ -56,7 +56,7 @@ class WavDecoder(object):
         >>>         print(frames)
     """
     def __init__(self, filename, decoder_class=wave, endchar=None,
-                 max_width=0, max_height=0, bs=0, downtoss=1):
+                 max_width=0, max_height=0, bs=0, downtoss=1, signed=None):
         """
         Args:
             filename (str): Name of waveform file
@@ -83,6 +83,10 @@ class WavDecoder(object):
                 is a brutal way to downsample which clobbers high frequencies
                 and causes aliasing. Defaults to 1 (so that no downsampling
                 occurs by default).
+            signed (bool): True to force PCM data to be treated as signed; False
+                to force data to be treated as unsigned. By default (None) data
+                will be treated as signed except in the case of 8-bit WAV which
+                is unsigned.
         """
         self._filename = filename
         self.decoder = decoder_class
@@ -96,6 +100,7 @@ class WavDecoder(object):
                 self.endchar = ">"
             else:
                 self.endchar = "<"
+        self.signed = signed
         self._reset()
         logger.info("WavDecoder initialized for %s" % filename)
 
@@ -145,6 +150,10 @@ class WavDecoder(object):
                               2**(self.params.sampwidth * 8 - 1))
         logger.debug("height set to %d" % self.height)
 
+        if self.signed is None:
+            self.signed = (self.params.sampwidth == 1) and (self.decoder ==
+                                                            wave)
+
         samp_fmt = self.struct_fmt_char
 
         self._samp_fmt = samp_fmt
@@ -174,7 +183,7 @@ class WavDecoder(object):
         sampwidth = self.params.sampwidth
         bitdepth = sampwidth * 8
         divisor = 2**(bitdepth-1)
-        if sampwidth == 1 and self.decoder == wave:
+        if sampwidth == 1 and not self.signed:
             # 8-bit wav files are unsigned
             y -= divisor
         return (y * self.height/2)/divisor
@@ -196,7 +205,7 @@ class WavDecoder(object):
         see: https://docs.python.org/library/struct.html
         """
         sampwidth = self.params.sampwidth
-        if sampwidth == 1 and self.decoder == wave:
+        if sampwidth == 1 and not self.signed:
             logger.info("unsigned 8-bit ('B')")
             return 'B'
         elif sampwidth == 1:
