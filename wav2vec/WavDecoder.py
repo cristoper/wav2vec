@@ -186,7 +186,7 @@ class WavDecoder(object):
         if sampwidth == 1 and not self.signed:
             # 8-bit wav files are unsigned
             y -= divisor
-        return (y * self.height/2)/divisor
+        return (y * self.height/2.0)/divisor
 
     @property
     def struct_fmt_char(self):
