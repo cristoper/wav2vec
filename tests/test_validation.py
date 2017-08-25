@@ -98,6 +98,17 @@ test_cases = [
         "flags": "--width 250 --height 0",
         "outfile": "test-16-stereo-100x0.svg",
     },
+    # long, stereo, --stream 1000
+    {
+        "infile": "test-16-stereo.wav",
+        "flags": "--stream 1000",
+        "outfile": "test-16-stereo-stream.svg",
+    },
+    {
+        "infile": "test-16-stereo.aiff",
+        "flags": "--stream 1000",
+        "outfile": "test-16-stereo-stream-aiff.svg",
+    }
 ]
 
 

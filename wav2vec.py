@@ -12,6 +12,16 @@ def main():
                          type=int, help=("Maximum width of generated SVG "
                                          "(graphic will be scaled down to "
                                          "this size in px)"))
+    aparser.add_argument("--stream", metavar="BS", default=0, type=int,
+                         help=("Stream the input file size in chunks (of BS "
+                               "number of frames at a time) and process/format "
+                               "each chunk separately. Useful for conserving "
+                               "memory when processing large files, but note "
+                               "that multi-channel paths will be split up into "
+                               "BS-sized chunks (this mainly affects the SVG "
+                               "formatter). By default BS=0, which causes the "
+                               "entire file to be read into memory before "
+                               "processing."))
     aparser.add_argument("--downtoss", default=1,
                          type=int, help="Downsize by keeping only 1 out of every N samples.", metavar="N")
     aparser.add_argument("--height", default=500,
@@ -37,7 +47,7 @@ def main():
         decoder_class = aifc
 
     # setup decoder and formatter
-    decoder = WavDecoder(args.filename, decoder_class=decoder_class, bs=0,
+    decoder = WavDecoder(args.filename, decoder_class=decoder_class, bs=args.stream,
                          max_width=args.width, max_height=args.height,
                          downtoss=args.downtoss)
     formatter_class = formatters[args.format]
