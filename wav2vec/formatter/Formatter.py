@@ -60,7 +60,7 @@ class Formatter(object):
         return ''
 
     @abc.abstractmethod
-    def path_front_matter(self, chan_num):
+    def path_front_matter(self, chan_num, first_samp):
         """
         This method should return a string which is output at the BEGINNING of
         the data points every time a path (there is one path for each channel)
@@ -68,6 +68,7 @@ class Formatter(object):
         in chunked from the waveform file -- that is, when bs > 0)
 
         chan_num (int): The channel number corresponding to the current path
+        first_samp (Point): The first sample in this segment of the path
         """
         return "Channel #%d" % chan_num
 
@@ -123,9 +124,9 @@ class Formatter(object):
                 is_closing = self.decoder.index == self.decoder.params.nframes
                 nchannels = len(paths)
                 for chan, chan_data in enumerate(paths):
-                    if is_opening or nchannels > 1:
-                        outfile.write(self.path_front_matter(chan))
-                    for sample in chan_data:
+                    for i, sample in enumerate(chan_data):
+                        if i == 0 and (is_opening or nchannels > 1):
+                            outfile.write(self.path_front_matter(chan, sample))
                         outfile.write(self.points_to_str(sample, chan))
                     if is_closing or nchannels > 1:
                         outfile.write(self.path_end_matter(chan))

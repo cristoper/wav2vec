@@ -12,7 +12,7 @@ class CSVFormatter(Formatter):
     def doc_end_matter(self, *args):
         return ''
 
-    def path_front_matter(self, chan_num):
+    def path_front_matter(self, chan_num, first):
         csv = "Channel #%d\n" % (chan_num + 1)
         csv += "X, Y\n"
         return csv
@@ -41,7 +41,7 @@ class SVGFormatter(Formatter):
     def doc_end_matter(self, *args):
         return '</svg>'
 
-    def path_front_matter(self, chan):
+    def path_front_matter(self, chan, first):
         return '<polyline stroke="black" stroke-linecap="round"'\
             ' stroke-linejoin="round" fill="none" points="'
 
