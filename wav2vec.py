@@ -36,12 +36,15 @@ def main():
         import aifc
         decoder_class = aifc
 
+    # setup decoder and formatter
     decoder = WavDecoder(args.filename, decoder_class=decoder_class, bs=0,
                          max_width=args.width, max_height=args.height,
                          downtoss=args.downtoss)
     formatter_class = formatters[args.format]
     logging.debug("formatter_class: %s" % formatter_class)
     formatter = formatter_class(decoder)
+
+    # decode and format
     formatter.output(sys.stdout)
 
 if __name__ == "__main__":
