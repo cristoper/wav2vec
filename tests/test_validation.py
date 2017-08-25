@@ -71,6 +71,37 @@ test_cases = [
         "flags": "-f CSV",
         "outfile": "noise-32-aiff.csv",
     },
+    # Default PostScript:
+    {
+        "infile": "noise-8.wav",
+        "flags": "-f PostScript",
+        "outfile": "noise-8.ps",
+    },
+    {
+        "infile": "noise-8.aiff",
+        "flags": "-f PostScript",
+        "outfile": "noise-8.ps",
+    },
+    {
+        "infile": "noise-16.wav",
+        "flags": "-f PostScript",
+        "outfile": "noise-16.ps",
+    },
+    {
+        "infile": "noise-16.aiff",
+        "flags": "-f PostScript",
+        "outfile": "noise-16-aiff.ps",
+    },
+    {
+        "infile": "noise-32.wav",
+        "flags": "-f PostScript",
+        "outfile": "noise-32.ps",
+    },
+    {
+        "infile": "noise-32.aiff",
+        "flags": "-f PostScript",
+        "outfile": "noise-32-aiff.ps",
+    },
     # long, stereo, default:
     {
         "infile": "test-16-stereo.wav",
@@ -92,11 +123,21 @@ test_cases = [
         "flags": "-f CSV",
         "outfile": "test-16-stereo-aiff.csv",
     },
-    # long, stereo, full height short width SVG:
+    {
+        "infile": "test-16-stereo.wav",
+        "flags": "-f PostScript",
+        "outfile": "test-16-stereo.ps",
+    },
+    # long, stereo, full height short width:
     {
         "infile": "test-16-stereo.wav",
         "flags": "--width 250 --height 0",
         "outfile": "test-16-stereo-100x0.svg",
+    },
+    {
+        "infile": "test-16-stereo.wav",
+        "flags": "--width 250 --height 0 --format PostScript",
+        "outfile": "test-16-stereo-100x0.ps",
     },
     # long, stereo, --stream 1000
     {
@@ -108,6 +149,16 @@ test_cases = [
         "infile": "test-16-stereo.aiff",
         "flags": "--stream 1000",
         "outfile": "test-16-stereo-stream-aiff.svg",
+    },
+    {
+        "infile": "test-16-stereo.wav",
+        "flags": "--stream 1000 -f PostScript",
+        "outfile": "test-16-stereo-stream.ps",
+    },
+    {
+        "infile": "test-16-stereo.aiff",
+        "flags": "--stream 1000 -f PostScript",
+        "outfile": "test-16-stereo-stream-aiff.ps",
     }
 ]
 

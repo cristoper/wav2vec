@@ -4,5 +4,5 @@ from .formatters import *
 formatters = {
     "SVG": SVGFormatter,
     "CSV": CSVFormatter,
-    #"PostScript": PSFormatter
+    "PostScript": PSFormatter,
 }

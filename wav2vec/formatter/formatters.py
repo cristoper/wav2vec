@@ -1,4 +1,5 @@
 from .Formatter import Formatter
+from ..WavDecoder import Point
 
 
 class CSVFormatter(Formatter):
@@ -12,12 +13,12 @@ class CSVFormatter(Formatter):
     def doc_end_matter(self, *args):
         return ''
 
-    def path_front_matter(self, chan_num, first):
+    def path_front_matter(self, first, chan_num):
         csv = "Channel #%d\n" % (chan_num + 1)
         csv += "X, Y\n"
         return csv
 
-    def path_end_matter(self, chan_num):
+    def path_end_matter(self, last, chan_num):
         return ''
 
     def points_to_str(self, sample, chan):
@@ -41,11 +42,11 @@ class SVGFormatter(Formatter):
     def doc_end_matter(self, *args):
         return '</svg>'
 
-    def path_front_matter(self, chan, first):
+    def path_front_matter(self, first, chan):
         return '<polyline stroke="black" stroke-linecap="round"'\
             ' stroke-linejoin="round" fill="none" points="'
 
-    def path_end_matter(self, chan):
+    def path_end_matter(self, last, chan):
         return '" />'
 
     def points_to_str(self, sample, chan):
@@ -53,3 +54,42 @@ class SVGFormatter(Formatter):
         # positive numbers move down
         (x, y) = sample.x, -1*sample.y + self.y_offset(chan)
         return ' %f, %f' % (x, y)
+
+
+class PSFormatter(Formatter):
+    """
+    Convert paths to PostScript.
+    """
+    backend = 'PostScript'
+
+    def doc_front_matter(self, params):
+        # This dict tracks the last point in each channel chunk so we can moveto
+        # back to it at the beginning of the next chunk
+        self.last_point = {}
+        nchannels = params.nchannels
+        height = self.decoder.height*nchannels
+        width = self.decoder.width
+        documentmedia = "%%%%DocumentMedia: wxh %d %d" % (width, height)
+        setpagedevice = "<< /PageSize [%d %d] >> setpagedevice"\
+            % (width, height)
+        ps = "%!PS"
+        ps = ps + "\n" + documentmedia + "\n" + setpagedevice
+        # We translate so that origin is at top-left
+        ps = ps + "\n" + "newpath\n0 %d translate\n" % height
+        return ps
+
+    def doc_end_matter(self, *args):
+        return "stroke\nshowpage"
+
+    def path_front_matter(self, first, chan):
+        last = self.last_point.get(chan, Point(0, 0))
+        (x, y) = last.x, last.y - self.y_offset(chan)
+        return "%f %f moveto\n" % (x, y)
+
+    def path_end_matter(self, last, chan):
+        self.last_point[chan] = last
+        return ""
+
+    def points_to_str(self, sample, chan):
+        (x, y) = sample.x, sample.y - self.y_offset(chan)
+        return "%f %f lineto\n" % (x, y)

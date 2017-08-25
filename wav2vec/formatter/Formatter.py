@@ -60,7 +60,7 @@ class Formatter(object):
         return ''
 
     @abc.abstractmethod
-    def path_front_matter(self, chan_num, first_samp):
+    def path_front_matter(self, first, chan_num):
         """
         This method should return a string which is output at the BEGINNING of
         the data points every time a path (there is one path for each channel)
@@ -73,7 +73,7 @@ class Formatter(object):
         return "Channel #%d" % chan_num
 
     @abc.abstractmethod
-    def path_end_matter(self, chan_num):
+    def path_end_matter(self, last, chan_num):
         """
         This method should return a string which is output at the END of the
         data points every time a path (there is one path for each channel) is
@@ -124,12 +124,15 @@ class Formatter(object):
                 is_closing = self.decoder.index == self.decoder.params.nframes
                 nchannels = len(paths)
                 for chan, chan_data in enumerate(paths):
-                    for i, sample in enumerate(chan_data):
-                        if i == 0 and (is_opening or nchannels > 1):
-                            outfile.write(self.path_front_matter(chan, sample))
+                    if is_opening or nchannels > 1:
+                        # beginning of channel chunk
+                        sample = chan_data[0]
+                        outfile.write(self.path_front_matter(sample, chan))
+                    for sample in chan_data:
                         outfile.write(self.points_to_str(sample, chan))
                     if is_closing or nchannels > 1:
-                        outfile.write(self.path_end_matter(chan))
+                        # end ofchannel chunk
+                        outfile.write(self.path_end_matter(sample, chan))
             outfile.write(self.doc_end_matter(self.decoder.params))
 
     def __str__(self):
