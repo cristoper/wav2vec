@@ -18,9 +18,8 @@ def main():
                                "each chunk separately. Useful for conserving "
                                "memory when processing large files, but note "
                                "that multi-channel paths will be split up into "
-                               "BS-sized chunks (this mainly affects the SVG "
-                               "formatter). By default BS=0, which causes the "
-                               "entire file to be read into memory before "
+                               "BS-sized chunks. By default BS=0, which causes "
+                               "the entire file to be read into memory before "
                                "processing."))
     aparser.add_argument("--downtoss", default=1,
                          type=int, help="Downsize by keeping only 1 out of every N samples.", metavar="N")
