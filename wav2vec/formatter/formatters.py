@@ -7,7 +7,7 @@ class CSVFormatter(Formatter):
     backend = "CSV"
 
     def doc_front_matter(self, *args):
-        return super(CSVFormatter, self).doc_front_matter()
+        return super(CSVFormatter, self).doc_front_matter(*args)
 
     def doc_end_matter(self, *args):
         return ''
@@ -20,7 +20,7 @@ class CSVFormatter(Formatter):
     def path_end_matter(self, chan_num):
         return ''
 
-    def points_to_str(self, sample):
+    def points_to_str(self, sample, chan):
         return "%f, %f\n" % sample
 
 
@@ -28,6 +28,8 @@ class SVGFormatter(Formatter):
     """
     Convert paths to SVG.
     """
+    backend = 'SVG'
+
     def doc_front_matter(self, params):
         nchannels = params.nchannels
         width = 'width="%d"' % self.decoder.width
