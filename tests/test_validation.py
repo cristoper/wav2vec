@@ -159,7 +159,18 @@ test_cases = [
         "infile": "test-16-stereo.aiff",
         "flags": "--stream 1000 -f PostScript",
         "outfile": "test-16-stereo-stream-aiff.ps",
-    }
+    },
+    # downtoss 3
+    {
+        "infile": "noise-16.wav",
+        "flags": "--downtoss 3",
+        "outfile": "noise-16-down3.svg",
+    },
+    {
+        "infile": "noise-16.aiff",
+        "flags": "--downtoss 3 -f PostScript",
+        "outfile": "noise-16-down3.ps",
+    },
 ]
 
 
