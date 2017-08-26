@@ -7,7 +7,7 @@ toc::[]
 
 == Introduction
 
-`wav2vec.py` is a Python script and package for converting waveform files (WAV or AIFF) to vector graphics (SVG or PostScript). Use cases include using an audio waveform as an element in a graphic design or including a waveform in a document.
+`wav2vec` is a Python script and package for converting waveform files (WAV or AIFF) to vector graphics (SVG or PostScript). Use cases include using an audio waveform as an element in a graphic design or including a waveform in a document.
 
 == Features
 
