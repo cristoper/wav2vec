@@ -2,7 +2,7 @@
 
 == Introduction
 
-`wav2vec.py` is a Python script and package for converting waveform files (WAV or AIFF) into vector graphics (SVG or PostScript). Use cases include using an audio waveform as an element in a graphic design or including a waveform in a LaTeX document.
+`wav2vec.py` is a Python script and package for converting waveform files (WAV or AIFF) to vector graphics (SVG or PostScript). Use cases include using an audio waveform as an element in a graphic design or including a waveform in a document.
 
 == Features
 
@@ -24,7 +24,14 @@
 == Install
 
 === From PyPI with PIP
-TODO
+The easiest way to install `wav2vec` is to use `pip` to install from the Python Package Index:
+
+[source, sh]
+----
+$ pip install wav2vec
+----
+
+Depending on your system, in order to install in the Python 3 path, you may have to use `pip3` instead of `pip`.
 
 === From git repo
 
@@ -132,12 +139,116 @@ Note that using the `--stream` flag on files with multiple channels will result 
 
 Note also that converting very large audio files to SVG may not be practical: most SVG editors will not handle paths with hundreds of thousands or millions of points well.
 
+==== Downsampling
+
+The `--downtoss N` flag will keep only 1 out of every N samples. This is a brutal form of downsampling which will clobber high frequency and add aliasing noise. It's best to instead downsample in your waveform recorder/editor before processing (or in your drawing program after processing).
+
+=== API
+
+You can also `import wav2vec` in order to convert wave files to the supported output formats in your own Python scripts. The package provides two main classes: `WavDecoder` and the abstract `Formatter`. The documentation is currently contained in the source files; look at link:./wav2vec/main.py[main.py] for an example of usage.
+
+The `WavDecoder` class wraps the standard library's `wave` and `aifc` modules and provides an easy way to read and decode WAV/AIFF files.  Use it as a context manager to ensure `close()` is called. Use it as an iterator to process all frames:
+
+[source, python]
+----
+>>> wd = WavDecoder('filename')
+>>> with wd as data:
+>>>     for frames in data:
+>>>         print(frames)
+----
+
+See link:./wav2vec/WavDecoder.py[wav2vec/WavDecoder.py].
+
+The `Formatter` class is an abstract base class which defines the interface for all formatters which output WAV data in textual formats. Each concrete subclass of `Formatter` takes a `WavDecoder` object in its constructor which is what is responsible for reading/decoding data from a WAV or AIFF file.
+
+The `output()` method will stream output to a file (stdout by default), but the entire output string can be captured using the `__str__()` method.
+
+[source, python]
+----
+>>> wd = WavDecoder("filename")
+>>> svgformatter = SVGFormatter(wd)
+>>> svgformatter.output() # outputs SVG to stdout
+>>> svg_str = str(svgformatter) # get SVG as a string
+----
+
+See link:./wav2vec/formatter/[the formatter package].
+
 === Examples
+
+==== SVG
+
+Here's what the link:tests/valfiles/snd/test-16-stereo.wav[tests/valfiles/snd/test-16-stereo.wav] file looks like in Audacity:
+
+image::./readme_imgs/audacity.png[]
+
+We can conver it to an SVG and then open it in Inkscape:
+
+[source, sh]
+----
+$ wav2vec tests/valfiles/snd/test-16-stereo.wav > test.svg
+$ inkscape test.svg
+----
+
+image::./readme_imgs/inkscape.png[]
+
+Then we can use Inkscape to non-destructively add filters and path effects and otherwise incorporate the waveform into a design:
+
+image::./readme_imgs/output.png[]
+
+==== PostScript
+
+To convert to PostScript instead of SVG:
+
+[source, sh]
+----
+$ wav2vec tests/valfiles/snd/test-16-stereo.wav -f PostScript > test.ps
+$ ps2pdf test.ps
+$ evince test.pdf
+----
+
+The above uses the Ghostscript `ps2pdf` tool to convert the resulting PostScript file to PDF and then opens it in the evince PDF reader (shown in the screenshot below). You could instead open `test.ps` directly in a PostScript viewer (or send it to a printer/plotter, or embedded in a LaTeX document, etc).
+
+image::./readme_imgs/evince.png[]
+
+==== CSV
+
+`wav2vec.py` also comes with a CSV formatter, which is useful to get WAV data into a spreadsheet:
+
+[source, sh]
+----
+$ wav2vec tests/valfiles/snd/test-16-stereo.wav -f CSV --height 0 > test.csv
+$ libreoffice test.csv
+----
+
+Note the `--height 0` option which prevents `wav2vec` from scaling the raw PCM values.
 
 == Hacking
 
 === Run tests
 
+To run unit and validation tests (requires python3):
+
+[source, sh]
+----
+$ python -m unittest discover
+----
+
 === Write custom formatter
 
+Creating a custom formatter is simply a matter of subclassing `Formatter` and overriding the five abstract methods it defines. Use the included SVGFormatter, PSFormatter, or CSVFormatter as a template (see link:./wav2vec/formatter/formatters.py[wav2vec/formatter/formatters.py]).
+
+== Issues
+
+Please feel free to use the Github issue tracker as a support forum for any questions, suggestions, bug reports, or feature requests. Thanks! https://github.com/cristoper/wav2vec/issues
+
+== See also
+
+- http://www.audacityteam.org/[Audacity] is a good Free audio recorder and waveform editor.
+- https://inkscape.org/en/[Inkscape] is a Free SVG-based drawing program
+- https://www.ghostscript.com/[Ghostscript] is a Free PostScript interpreter which can distill to PDF.
+
 == Support the Author
+
+If this script was useful to you, please consider supporting my work on this and other open-source projects by making a small one-time donation: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=E78W4LH2NADXE[donate via PayPal].
+
+If you're looking to contract a Python developer, I might be able to help. Contact me, Chris, at dev@orangenoiseproduction.com
