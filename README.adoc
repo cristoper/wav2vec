@@ -150,7 +150,7 @@ The `--downtoss N` flag will keep only 1 out of every N samples. This is a bruta
 
 === API
 
-You can also `import wav2vec` in order to convert wave files to the supported output formats in your own Python scripts. The package provides two main classes: `WavDecoder` and the abstract `Formatter`. The documentation is currently contained in the source files; look at link:./wav2vec/main.py[main.py] for an example of usage.
+You can also `import wav2vec` in order to convert wave files to the supported output formats in your own Python scripts. The package provides two main classes: `WavDecoder` and the abstract `Formatter` (and the concrete implementations: `SVGFormatter`, `PSFormatter`, and `CSVFormatter`). The documentation is currently contained in the source files; look at link:./wav2vec/main.py[main.py] for an example of usage.
 
 The `WavDecoder` class wraps the standard library's `wave` and `aifc` modules and provides an easy way to read and decode WAV/AIFF files.  Use it as a context manager to ensure `close()` is called. Use it as an iterator to process all frames:
 
