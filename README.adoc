@@ -1,4 +1,9 @@
+:toc:
+:toc-placement!:
+
 = wav2vec.py
+
+toc::[]
 
 == Introduction
 
