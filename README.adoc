@@ -1,7 +1,7 @@
 :toc:
 :toc-placement!:
 
-= wav2vec.py
+= wav2vec
 
 toc::[]
 
@@ -217,7 +217,7 @@ image::./readme_imgs/evince.png[]
 
 ==== CSV
 
-`wav2vec.py` also comes with a CSV formatter, which is useful to get WAV data into a spreadsheet:
+`wav2vec` also comes with a CSV formatter, which is useful to get WAV data into a spreadsheet:
 
 [source, sh]
 ----
