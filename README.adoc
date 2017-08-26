@@ -40,7 +40,7 @@ Depending on your system, in order to install in the Python 3 path, you may have
 
 === From git repo
 
-Clone the git repository:
+Alternatively, clone the git repository:
 
 [source, sh]
 ----
