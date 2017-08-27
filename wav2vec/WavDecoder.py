@@ -178,15 +178,14 @@ class WavDecoder(object):
         """
         Scale 'y' according to `max_height`
         """
-        # important to multiply by height before dividing so we don't
-        # lose floating point resolution on very small numbers:
         sampwidth = self.params.sampwidth
         bitdepth = sampwidth * 8
         divisor = 2**(bitdepth-1)
+        scale = (self.height * 0.5)/divisor
         if sampwidth == 1 and not self.signed:
             # 8-bit wav files are unsigned
             y -= divisor
-        return (y * self.height/2.0)/divisor
+        return y * scale
 
     @property
     def struct_fmt_char(self):
