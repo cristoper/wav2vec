@@ -252,6 +252,8 @@ Please feel free to use the Github issue tracker as a support forum for any ques
 - https://inkscape.org/en/[Inkscape] is a Free SVG-based drawing program
 - https://www.ghostscript.com/[Ghostscript] is a Free PostScript interpreter which can distill to PDF.
 
+- https://github.com/afreiday/php-waveform-svg[php-waveform-svg] is a PHP script for converting mp3->wav->svg. (It looks simple, but I haven't tried it.)
+
 == Support the Author
 
 If this script was useful to you, please consider supporting my work on this and other open-source projects by making a small one-time donation: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=E78W4LH2NADXE[donate via PayPal].
