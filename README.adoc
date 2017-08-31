@@ -80,7 +80,7 @@ usage: wav2vec [-h] [--format {PostScript,SVG,CSV}] [--width WIDTH]
                [--log {DEBUG,INFO,WARNING,ERROR,CRITICAL}]
                filename
 
-Convert WAV and AIFF files to vector (SVG, PostScript, CVS) graphics.
+Convert WAV and AIFF files to vector (SVG, PostScript, CSV) graphics.
 
 positional arguments:
   filename              The WAV file to read
@@ -115,7 +115,7 @@ The output is sent to stdout.
 === Options
 ==== Output format
 
-The `--format` flag sets the output format. `wav2vec` includes three formatters: `SVG` (default if no `--format` is given), `PostScript`, and `CVS`.
+The `--format` flag sets the output format. `wav2vec` includes three formatters: `SVG` (default if no `--format` is given), `PostScript`, and `CSV`.
 
 [source, sh]
 ----
