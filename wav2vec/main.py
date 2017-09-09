@@ -32,7 +32,7 @@ def main():
                                "the entire file to be read into memory before "
                                "processing."))
     aparser.add_argument("--downtoss", default=1,
-                         type=int, help="Downsize by keeping only 1 out of every N samples.", metavar="N")
+                         type=int, help="Downsample by keeping only 1 out of every N samples.", metavar="N")
     aparser.add_argument("--log", dest="loglevel",
                          choices=['DEBUG', 'INFO', 'WARNING', 'ERROR',
                                   'CRITICAL'], help="Set the logging level.",

@@ -104,7 +104,7 @@ optional arguments:
                         paths will be split up into BS-sized chunks. By
                         default BS=0, which causes the entire file to be read
                         into memory before processing.
-  --downtoss N          Downsize by keeping only 1 out of every N samples.
+  --downtoss N          Downsample by keeping only 1 out of every N samples.
   --log {DEBUG,INFO,WARNING,ERROR,CRITICAL}
                         Set the logging level.
 
