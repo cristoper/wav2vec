@@ -211,7 +211,7 @@ $ ps2pdf test.ps
 $ evince test.pdf
 ----
 
-The above uses the Ghostscript `ps2pdf` tool to convert the resulting PostScript file to PDF and then opens it in the evince PDF reader (shown in the screenshot below). You could instead open `test.ps` directly in a PostScript viewer (or send it to a printer/plotter, or embedded in a LaTeX document, etc).
+The above uses the Ghostscript `ps2pdf` tool to convert the resulting PostScript file to PDF and then opens it in the evince PDF reader (shown in the screenshot below). You could instead open `test.ps` directly in a PostScript viewer (or send it to a printer/plotter, or embed it in a LaTeX document, etc).
 
 image::./readme_imgs/evince.png[]
 
