@@ -186,7 +186,7 @@ Here's what the link:tests/valfiles/snd/test-16-stereo.wav[tests/valfiles/snd/te
 
 image::./readme_imgs/audacity.png[]
 
-We can conver it to an SVG and then open it in Inkscape:
+We can convert it to an SVG and then open it in Inkscape:
 
 [source, sh]
 ----
