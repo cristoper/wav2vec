@@ -182,7 +182,7 @@ class TestValidationFiles(unittest.TestCase):
                 with open(outdir + '/' + test['outfile']) as f:
                     expected = f.read()
                 test_file = indir + '/' + test['infile']
-                cmd_line = "python %s %s %s" % (cmd, test['flags'], test_file)
+                cmd_line = "python3 %s %s %s" % (cmd, test['flags'], test_file)
                 result = subprocess.check_output(cmd_line.split())
                 result = result.decode('utf-8')
                 #print(test['infile'], test['outfile'])
