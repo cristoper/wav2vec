@@ -2,9 +2,33 @@ import sys
 from .formatter import formatters
 from . import WavDecoder
 import argparse
-import sndhdr
 import wave
 import logging
+
+
+# returns either 'wav' or 'aiff'
+# on Python versions > 3.13 will use python-filetype instead of the deprecated sndhdr
+def get_file_type(filename):
+    try:
+        import sndhdr
+        kind = sndhdr.what(filename)
+        if kind is None:
+            return None
+        return kind[0]
+
+    except ImportError:
+        # no sndhdr means we're on python > 3.12
+        # https://peps.python.org/pep-0594/#sndhdr
+        import filetype
+        logging.warning("sndhdr is deprecated, using python-filetype instead")
+        kind = filetype.guess(filename)
+        if kind is None:
+            return None
+        if kind.mime == "audio/x-wav":
+            return 'wav'
+        elif kind.mime == "audio/x-aiff":
+            return 'aiff'
+        return None
 
 
 def main():
@@ -45,7 +69,11 @@ def main():
 
     # Test whether WAV or AIFF
     decoder_class = wave
-    sndtype = sndhdr.what(args.filename)[0]
+    sndtype = get_file_type(args.filename)
+    if sndtype is None:
+        logging.error(
+            "Unknown file type (should be either WAV or AIFF): %s" % args.filename)
+        sys.exit(1)
     if sndtype == 'aiff' or sndtype == 'aifc':
         import aifc
         decoder_class = aifc

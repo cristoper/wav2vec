@@ -14,6 +14,7 @@ Note:: This project is completely unrelated to the https://arxiv.org/abs/1904.05
 == Features
 
 * Portable: runs on Python 2.7+ and Python 3 and does not depend on any third-party packages.
+** Python 3.13 https://peps.python.org/pep-0594/#sndhdr[will remove] the standard library `sndhdr` package (used by `wav2vec` to detect the file type) so if you are running Python 3.13 or later you will need to install the https://github.com/h2non/filetype.py[filetype] package.
 * Supported PCM input file formats:
 ** 8-bit signed AIFF
 ** 8-bit unsigned WAV
