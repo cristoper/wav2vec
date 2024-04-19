@@ -19,6 +19,7 @@ Note:: This project is completely unrelated to the https://arxiv.org/abs/1904.05
 ** 8-bit unsigned WAV
 ** 16-bit signed WAV and AIFF
 ** 32-bit signed WAV and AIFF
+** Floating point WAV files are not supported because they are not yet supported by the Python `wave` module (https://github.com/python/cpython/issues/60729)
 * Input file format is automatically detected and handled (the file name/extension is unimportant)
 * Output file formats:
 ** Scalable Vector Graphics (SVG)
