@@ -74,6 +74,7 @@ def main():
         logging.error(
             "Unknown file type (should be either WAV or AIFF): %s" % args.filename)
         sys.exit(1)
+    logging.debug("sndtype: ",  sndtype)
     if sndtype == 'aiff' or sndtype == 'aifc':
         import aifc
         decoder_class = aifc
