@@ -2,11 +2,19 @@
 This module defines the WavDecoder class, used to read WAV and AIFF files from
 disk and decode them into channel-separated integers.
 """
-import wave
-import aifc
-import struct
-from collections import namedtuple
+
 import logging
+import struct
+import wave
+from collections import namedtuple
+
+# aifc was dropped with python 3.13 (see https://peps.python.org/pep-0594/)
+# but the package can still be pip installed (https://github.com/youknowone/python-deadlib)
+# pip3 install standard-aifc
+try:
+    import aifc
+except ImportError:
+    raise ImportError("Please install aifc with `pip install standard-aifc`")
 
 logger = logging.getLogger(__name__)
 
@@ -17,12 +25,13 @@ except NameError:
     # in Python3 xrange has been renamed to range
     xrange = range
 
-Point = namedtuple('Point', ['x', 'y'])
+Point = namedtuple("Point", ["x", "y"])
 
 # The Python 2.7 version of the wave module does not use a namedtuple as the
 # return value of getparams(), so we define it here for cross-compatibility
-_wave_params = namedtuple('_wave_params',
-                          'nchannels sampwidth framerate nframes comptype compname')
+_wave_params = namedtuple(
+    "_wave_params", "nchannels sampwidth framerate nframes comptype compname"
+)
 
 
 class WavDecoder(object):
@@ -55,8 +64,18 @@ class WavDecoder(object):
         >>>     for frames in data:
         >>>         print(frames)
     """
-    def __init__(self, filename, decoder_class=wave, endchar=None,
-                 max_width=0, max_height=0, bs=0, downtoss=1, signed=None):
+
+    def __init__(
+        self,
+        filename,
+        decoder_class=wave,
+        endchar=None,
+        max_width=0,
+        max_height=0,
+        bs=0,
+        downtoss=1,
+        signed=None,
+    ):
         """
         Args:
             filename (str): Name of waveform file
@@ -132,7 +151,7 @@ class WavDecoder(object):
         Open the underlying WAV or AIFF file, and set instance variables
         according to the file's parameters.
         """
-        wf = self.decoder.open(self._filename, 'rb')
+        wf = self.decoder.open(self._filename, "rb")
         self._wav_file = wf
         self.index = 0
         self.params = _wave_params(*wf.getparams())
@@ -144,15 +163,13 @@ class WavDecoder(object):
 
         if self.max_height <= 0:
             # If max-height is set at 0, then use full bitdepth
-            self.height = 2**(self.params.sampwidth*8) - 1
+            self.height = 2 ** (self.params.sampwidth * 8) - 1
         else:
-            self.height = min(self.max_height,
-                              2**(self.params.sampwidth * 8 - 1))
+            self.height = min(self.max_height, 2 ** (self.params.sampwidth * 8 - 1))
         logger.debug("height set to %d" % self.height)
 
         if self.signed is None:
-            self.signed = (self.params.sampwidth == 1) and (self.decoder ==
-                                                            wave)
+            self.signed = (self.params.sampwidth == 1) and (self.decoder == wave)
 
         samp_fmt = self.struct_fmt_char
 
@@ -172,7 +189,7 @@ class WavDecoder(object):
         Scale `x` according to `max_width`
         """
         # (explicit cast to float needed for Python2)
-        return x*min(1.0, float(self.width)/self.params.nframes)
+        return x * min(1.0, float(self.width) / self.params.nframes)
 
     def scale_y(self, y):
         """
@@ -180,8 +197,8 @@ class WavDecoder(object):
         """
         sampwidth = self.params.sampwidth
         bitdepth = sampwidth * 8
-        divisor = 2**(bitdepth-1)
-        scale = (self.height * 0.5)/divisor
+        divisor = 2 ** (bitdepth - 1)
+        scale = (self.height * 0.5) / divisor
         if sampwidth == 1 and not self.signed:
             # 8-bit wav files are unsigned
             y -= divisor
@@ -206,16 +223,16 @@ class WavDecoder(object):
         sampwidth = self.params.sampwidth
         if sampwidth == 1 and not self.signed:
             logger.info("unsigned 8-bit ('B')")
-            return 'B'
+            return "B"
         elif sampwidth == 1:
             logger.info("signed 8-bit ('b')")
-            return 'b'
+            return "b"
         elif sampwidth == 2:
             logger.info("signed 16-bit ('h')")
-            return 'h'
+            return "h"
         elif sampwidth == 4:
             logger.info("signed 32-bit ('h')")
-            return 'i'
+            return "i"
         else:
             raise ValueError("Unsupported file type.")
 
@@ -231,8 +248,12 @@ class WavDecoder(object):
         """
         if self._wav_file is None:
             # Likely user didn't open(), do it for them:
-            logger.info(("The Wav_reader does not exist; probably open() was"
-                         " not called. Calling it now..."))
+            logger.info(
+                (
+                    "The Wav_reader does not exist; probably open() was"
+                    " not called. Calling it now..."
+                )
+            )
             self.open()
         p = self.params
         if self.bs == 0:
@@ -252,16 +273,16 @@ class WavDecoder(object):
         wav_bytes = self._wav_file.readframes(frames)
         logger.debug("Read %d frames" % frames)
         fmt = self._samp_fmt
-        fmt_str = '%s%d%s' % (self.endchar, p.nchannels * frames, fmt)
+        fmt_str = "%s%d%s" % (self.endchar, p.nchannels * frames, fmt)
         data = struct.unpack(fmt_str, wav_bytes)
 
         # Extract the tuples of integers into a list of Points for each channel:
         start = self.index + 1
         sep_data = []
         for chan in xrange(0, p.nchannels):
-            chan_data = data[chan::p.nchannels]
+            chan_data = data[chan :: p.nchannels]
             # downsample:
-            chan_data = chan_data[::self._downtoss]
+            chan_data = chan_data[:: self._downtoss]
             chan_points = []
             for i, sample in enumerate(chan_data):
                 x = self.scale_x(i + start)

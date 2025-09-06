@@ -30,9 +30,12 @@ class SetupBase(unittest.TestCase):
 
 class TestInit(SetupBase):
     def test_endchar_for_aiff_is_bigendian(self):
-        import aifc
-        wd = WavDecoder("filename", decoder_class=aifc)
-        self.assertEqual(wd.endchar, ">")
+        try:
+            import aifc
+            wd = WavDecoder("filename", decoder_class=aifc)
+            self.assertEqual(wd.endchar, ">")
+        except ImportError:
+            print("To test aifc, install the standard-aifc module: `pip install standard-aifc`")
 
 
 class TestMagic(SetupBase):

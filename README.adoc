@@ -14,6 +14,7 @@ Note:: This project is completely unrelated to the https://arxiv.org/abs/1904.05
 == Features
 
 * Portable: runs on Python 2.7+ and Python 3 and does not depend on any third-party packages.
+** Python 3.13 removed several modules this tool relies on (see https://peps.python.org/pep-0594/), but those packages are still available on pypi (as `standard-aifc` and `standard-sndhdr`) and will be installed automatically if you install `wav2vec` with uv or pip.
 ** Python 3.13 https://peps.python.org/pep-0594/#sndhdr[will remove] the standard library `sndhdr` package (used by `wav2vec` to detect the file type) so if you are running Python 3.13 or later you will need to install the https://github.com/h2non/filetype.py[filetype] package.
 * Supported PCM input file formats:
 ** 8-bit signed AIFF
@@ -37,6 +38,13 @@ The easiest way to install `wav2vec` is to use `pip` to install from the Python 
 
 [source, sh]
 ----
+$ uv tool install wav2vec
+----
+
+or
+
+[source, sh]
+----
 $ pip install wav2vec
 ----
 
@@ -50,6 +58,19 @@ Alternatively, clone the git repository:
 ----
 $ git clone https://github.com/cristoper/wav2vec.git
 $ cd wav2vec
+----
+
+If you are running Python >=3.13 then you'll also need to install the `aifc` and `sndhdr` modules:
+
+[source, sh]
+----
+$ pip install standard-aifc standard-sndhdr
+----
+
+or on Debian:
+[source, sh]
+----
+$ apt install python3-standard-aifc python3-standard-sndhdr
 ----
 
 Now you can run `wav2vec.py` directly:

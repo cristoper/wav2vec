@@ -1,9 +1,10 @@
-import sys
-from .formatter import formatters
-from . import WavDecoder
 import argparse
-import wave
 import logging
+import sys
+import wave
+
+from . import WavDecoder
+from .formatter import formatters
 
 
 # returns either 'wav' or 'aiff'
@@ -17,18 +18,9 @@ def get_file_type(filename):
         return kind[0]
 
     except ImportError:
-        # no sndhdr means we're on python > 3.12
+        # no sndhdr means we're on python >= 3.13
         # https://peps.python.org/pep-0594/#sndhdr
-        import filetype
-        logging.warning("sndhdr is deprecated, using python-filetype instead")
-        kind = filetype.guess(filename)
-        if kind is None:
-            return None
-        if kind.mime == "audio/x-wav":
-            return 'wav'
-        elif kind.mime == "audio/x-aiff":
-            return 'aiff'
-        return None
+        raise ImportError("Please install sndhdr with `pip install standard-sndhdr`")
 
 
 def main():
@@ -76,8 +68,12 @@ def main():
         sys.exit(1)
     logging.debug("sndtype: ",  sndtype)
     if sndtype == 'aiff' or sndtype == 'aifc':
-        import aifc
-        decoder_class = aifc
+        try:
+            import aifc
+            decoder_class = aifc
+        except ImportError:
+            logging.error("The aifc module was removed in Python 3.13 (https://peps.python.org/pep-0594/). To install it as a module run `pip install standard-aifc`")
+            sys.exit(1)
 
     # setup decoder and formatter
     decoder = WavDecoder(args.filename, decoder_class=decoder_class, bs=args.stream,
