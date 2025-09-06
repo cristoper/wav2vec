@@ -26,6 +26,7 @@ setup(
     description=('A Python package to convert waveform files (WAV or AIFF) to '
                  'vector graphics (SVG, PostScript, or CVS)'),
     long_description=long_description,
+    long_description_content_type="text/plain",
 
     # The project's main homepage.
     url='https://github.com/cristoper/wav2vec',
