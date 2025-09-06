@@ -8,7 +8,6 @@ from .formatter import formatters
 
 
 # returns either 'wav' or 'aiff'
-# on Python versions > 3.13 will use python-filetype instead of the deprecated sndhdr
 def get_file_type(filename):
     try:
         import sndhdr
