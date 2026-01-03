@@ -32,7 +32,7 @@ setup(
     url='https://github.com/cristoper/wav2vec',
 
     # Author details
-    author='Chris Burkhardt',
+    author='Chrisb',
     author_email='dev@orangenoiseproduction.com',
 
     # Choose your license
